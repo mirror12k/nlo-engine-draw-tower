@@ -167,13 +167,15 @@ GameSystem.prototype.run_game = function(ctx, fps) {
 	setInterval(this.step_game_frame.bind(this, ctx), 1000 / fps);
 }
 GameSystem.prototype.step_game_frame = function(ctx) {
-	var time = new Date().getTime();
-	this.deltatime = (time - this.last_timestamp) / 1000;
-    this.last_timestamp = time;
+	if (document.hasFocus()) {
+		var time = new Date().getTime();
+		this.deltatime = Math.min((time - this.last_timestamp) / 1000, 1 / 10);
+	    this.last_timestamp = time;
 
-	this.update();
-	
-	this.draw(ctx);
+		this.update();
+		
+		this.draw(ctx);
+	}
 };
 GameSystem.prototype.update = function () {
 	try {
@@ -210,10 +212,16 @@ GameSystem.prototype.update = function () {
 GameSystem.prototype.draw = function (ctx) {
 	// ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-	ctx.globalAlpha = 0.05;
-	ctx.fillStyle = this.background_color;
-	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	// this.clear_timer += this.deltatime / 10;
+	// this.clear_timer %= Math.PI * 2;
+
+	// ctx.globalAlpha = 0.2;
 	ctx.globalAlpha = 1;
+	ctx.fillStyle = 'rgba(0,0,0,0.05)';
+	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+	ctx.drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height);
+	// ctx.globalAlpha = 1;
 
 	var entities_to_draw = this.entities.filter(e => e.active);
 	entities_to_draw.sort(function (a, b) { return a.z_index - b.z_index; });
@@ -422,6 +430,12 @@ Entity.prototype.add_entity = function(ent) {
 	ent.parent = this;
 	this.sub_entities.push(ent);
 };
+Entity.prototype.add_entities = function(ents) {
+	ents.forEach(e => {
+		e.parent = this;
+		this.sub_entities.push(e);
+	});
+};
 Entity.prototype.remove_entity = function(ent) {
 	var index = this.sub_entities.indexOf(ent);
 	if (index !== -1)
@@ -513,4 +527,5 @@ function unit_vector(p) { var d = vector_length(p); return { px: p.px/d, py: p.p
 function unit_mul(p, n) { return { px: p.px*n, py: p.py*n }; }
 function avgp(p1, p2) { return { px: (p1.px+p2.px)/2, py: (p1.py+p2.py)/2 }; }
 function addp(p1, p2) { return { px: p1.px+p2.px, py: p1.py+p2.py }; }
+function rand_vector() { var a = Math.random() * Math.PI * 2; return { px: Math.cos(a), py: Math.sin(a) };; }
 
