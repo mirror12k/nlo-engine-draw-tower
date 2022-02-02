@@ -117,6 +117,8 @@ function GameSystem(canvas, assets) {
 	this.mouse1_state = false;
 	this.mouse_position = { px: 0, py: 0 };
 
+	this.timescale = 1;
+
 	document.addEventListener('keydown', (function (e) {
 		e = e || window.event;
 		if (!this.keystate.ctrl)
@@ -169,7 +171,7 @@ GameSystem.prototype.run_game = function(ctx, fps) {
 GameSystem.prototype.step_game_frame = function(ctx) {
 	if (document.hasFocus()) {
 		var time = new Date().getTime();
-		this.deltatime = Math.min((time - this.last_timestamp) / 1000, 1 / 10);
+		this.deltatime = this.timescale * Math.min((time - this.last_timestamp) / 1000, 1 / 10);
 	    this.last_timestamp = time;
 
 		this.update();

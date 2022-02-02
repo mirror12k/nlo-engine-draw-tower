@@ -2,6 +2,12 @@
 var game;
 
 
+function OverlayService() {
+	Entity.call(this, game);
+	this.z_index = 10000;
+}
+OverlayService.prototype = Object.create(Entity.prototype);
+
 function CheatService() {
 	Entity.call(this, game);
 	this.cheats_enabled = true;
@@ -94,8 +100,6 @@ UserInputService.prototype.update = function(game) {
 						&& p.py >= 0 && p.py <= game.canvas.height) {
 					ink_amount -= d;
 					this.scribble.add_point(p);
-				// } else {
-				// 	ink_amount = -1;
 				}
 			}, () => {
 				if (this.last_scribble)
@@ -157,14 +161,86 @@ UserInputService.prototype.update = function(game) {
 
 
 
+		// } else if (
+		// 		(game.services.turret_service.is_firing === true)) {
+		// 	// player is putting down barricades
+
+		// 	// create a scribble
+		// 	game.add_entity(this.scribble = new CrossScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
+
+		// 	var ink_amount = 400;
+
+
+		// 	// drag it until the player releases the mouse button
+		// 	this.until(() => !game.mouse1_state && ink_amount >= 0, () => {
+		// 		var p = game.mouse_game_position;
+		// 		var d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+		// 		var max = 15 + Math.random() * 5;
+		// 		if (d > max) {
+		// 			var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 50))));
+		// 			p = addp(
+		// 					unit_mul(n, max),
+		// 					this.scribble.points[this.scribble.points.length-1]);
+		// 			d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+
+		// 		}
+
+		// 		if (d > 15
+		// 				&& ink_amount >= d
+		// 				&& !game.query_entities(NonBuildableCircle).find(circle => dist(circle, p) < circle.radius + 10)
+		// 				&& !game.find_at(NonBuildableRectangle, p)
+		// 				&& p.px >= 0 && p.px <= game.canvas.width
+		// 				&& p.py >= 0 && p.py <= game.canvas.height) {
+		// 			ink_amount -= d;
+		// 			this.scribble.add_point(p);
+		// 		}
+
+		// 	}, () => {
+
+		// 		if (game.last_barricade) {
+		// 			var last = game.last_barricade;
+		// 			last.do_fade = true;
+		// 			last.shadow.do_fade = true;
+		// 			this.after(2, () => {
+		// 				game.remove_entity(last);
+		// 				game.remove_entity(last.shadow);
+		// 			});
+		// 		}
+
+		// 		game.last_barricade = this.scribble;
+
+		// 		game.add_entity(this.second_scribble = new CrossScribble());
+		// 		this.second_scribble.z_index = 1;
+		// 		this.second_scribble.px = 2;
+		// 		this.second_scribble.py = 2;
+		// 		this.second_scribble.is_greyscale = true;
+		// 		this.second_scribble.line_width = 6;
+		// 		this.second_scribble.play_pointset(this.scribble.points);
+		// 		this.scribble.shadow = this.second_scribble;
+
+
+		// 		var s = this.scribble;
+		// 		this.after(30, () => {
+		// 			s.do_fade = true;
+		// 			s.shadow.do_fade = true;
+		// 			this.after(2, () => {
+		// 				game.remove_entity(s);
+		// 				game.remove_entity(s.shadow);
+		// 			});
+		// 		});
+		// 	});
+
 		} else if (
 				(game.services.turret_service.is_firing === true)) {
 			// player is putting down barricades
 
 			// create a scribble
-			game.add_entity(this.scribble = new CrossScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
+			game.services.overlay_service.add_entity(
+					this.scribble = new ErasingScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
 
-			var ink_amount = 400;
+			var ink_amount = 3000;
+
+			game.timescale = 0.1;
 
 
 			// drag it until the player releases the mouse button
@@ -173,7 +249,7 @@ UserInputService.prototype.update = function(game) {
 				var d = dist(p, this.scribble.points[this.scribble.points.length-1]);
 				var max = 15 + Math.random() * 5;
 				if (d > max) {
-					var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 50))));
+					var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 5))));
 					p = addp(
 							unit_mul(n, max),
 							this.scribble.points[this.scribble.points.length-1]);
@@ -183,48 +259,24 @@ UserInputService.prototype.update = function(game) {
 
 				if (d > 15
 						&& ink_amount >= d
-						&& !game.query_entities(NonBuildableCircle).find(circle => dist(circle, p) < circle.radius + 10)
-						&& !game.find_at(NonBuildableRectangle, p)
 						&& p.px >= 0 && p.px <= game.canvas.width
 						&& p.py >= 0 && p.py <= game.canvas.height) {
 					ink_amount -= d;
 					this.scribble.add_point(p);
-				// } else {
-				// 	ink_amount = -1;
+
+					var ents = game.services.enemy_service.sub_entities.filter(e => dist_sqr(e, p) < 50 * 50);
+					game.services.enemy_service.remove_entities(ents);
 				}
 
 			}, () => {
 
-				if (game.last_barricade) {
-					var last = game.last_barricade;
-					last.do_fade = true;
-					last.shadow.do_fade = true;
-					this.after(2, () => {
-						game.remove_entity(last);
-						game.remove_entity(last.shadow);
-					});
-				}
-
-				game.last_barricade = this.scribble;
-
-				game.add_entity(this.second_scribble = new CrossScribble());
-				this.second_scribble.z_index = 1;
-				this.second_scribble.px = 2;
-				this.second_scribble.py = 2;
-				this.second_scribble.is_greyscale = true;
-				this.second_scribble.line_width = 6;
-				this.second_scribble.play_pointset(this.scribble.points);
-				this.scribble.shadow = this.second_scribble;
+				game.timescale = 1;
 
 
 				var s = this.scribble;
-				this.after(30, () => {
-					s.do_fade = true;
-					s.shadow.do_fade = true;
-					this.after(2, () => {
-						game.remove_entity(s);
-						game.remove_entity(s.shadow);
-					});
+				s.do_fade = true;
+				this.after(2, () => {
+					game.services.overlay_service.remove_entity(s);
 				});
 			});
 
@@ -833,7 +885,7 @@ CrossScribble.prototype.render_scribble = function(prev, from, to, next, negativ
 				+ Math.floor((Math.cos((draw_cycle % Math.PI / 1.5) - Math.PI * 0.2 + Math.PI * 4 / 3) / 2 + 0.5)*160) *2 + ')';
 	}
 	// ctx.strokeStyle = this.color;
-	if (draw_cycle < Math.PI ) {
+	if (draw_cycle < Math.PI) {
 		ctx.beginPath();
 		ctx.moveTo(from.px, from.py);
 		ctx.bezierCurveTo(from.px + 40 + d1.px, from.py - 20 + d1.py, to.px - 40, to.py - 20, to.px, to.py);
@@ -848,6 +900,68 @@ CrossScribble.prototype.render_scribble = function(prev, from, to, next, negativ
 		ctx.lineTo(to.px - 10, to.py - 20);
 		ctx.stroke();
 	}
+	ctx.restore();
+};
+
+
+function ErasingScribble(points=[]) {
+	Scribble.call(this, points);
+
+	this.z_index = 10000;
+
+	this.prerender_self();
+}
+ErasingScribble.prototype = Object.create(Scribble.prototype);
+ErasingScribble.prototype.prerender_self = function () {
+	var ctx = this.buffer_canvas.getContext('2d');
+	ctx.imageSmoothingEnabled = false;
+	ctx.filter = 'sepia(100%) blur(2px)';
+	ctx.fillStyle = '#888';
+	ctx.fillRect(0,0, this.buffer_canvas.width, this.buffer_canvas.height);
+	ctx.globalAlpha = 0.5;
+	ctx.drawImage(game.canvas, 2, 2);
+	ctx.globalAlpha = 1;
+	ctx.filter = 'blur(2px)';
+	game.services.enemy_service.draw(ctx);
+};
+ErasingScribble.prototype.update = function(game) {
+	ScreenEntity.prototype.update.call(this, game);
+	this.draw_cycle += game.deltatime * 20;
+	this.draw_cycle %= Math.PI * 2;
+	if (this.do_fade) {
+		this.is_faded = true;
+		this.redraw_canvas_fade(game.deltatime * 2);
+	}
+};
+ErasingScribble.prototype.render_scribble = function(prev, from, to, next) {
+	// var d = dist(from, to);
+	// var d1 = unit_mul(unit_vector(vector_delta(prev, from)), 10);
+	// var d2 = unit_mul(unit_vector(vector_delta(next, to)), 10);
+	// var davg = unit_mul(avgp(d1,d2), 2);
+	// var dr1 = lerpp(davg, d1, 0);
+	// var dr2 = lerpp(davg, d2, 0);
+
+	var ctx = this.buffer_canvas.getContext('2d');
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.save();
+	ctx.globalAlpha = 1;
+	ctx.lineWidth = 100;
+	// var draw_cycle = to.draw_cycle || 0;
+
+	// if (this.is_greyscale) {
+	// 	ctx.strokeStyle = '#222';
+	// } else {
+	// 	ctx.strokeStyle = 'rgb('
+	// 			+ Math.floor((Math.cos((draw_cycle % Math.PI / 1.5) - Math.PI * 0.2) / 2 + 0.5)*55 + 200) *2 + ','
+	// 			+ Math.floor((Math.cos((draw_cycle % Math.PI / 1.5) - Math.PI * 0.2 + Math.PI * 2 / 3) / 2 + 0.5)*160) *2 + ','
+	// 			+ Math.floor((Math.cos((draw_cycle % Math.PI / 1.5) - Math.PI * 0.2 + Math.PI * 4 / 3) / 2 + 0.5)*160) *2 + ')';
+	// }
+	// ctx.strokeStyle = this.color;
+		ctx.beginPath();
+		ctx.moveTo(prev.px, prev.py);
+		ctx.lineTo(next.px, next.py);
+		ctx.stroke();
+	// }
 	ctx.restore();
 };
 
@@ -1195,6 +1309,7 @@ function main () {
 		game.background_color = '#111';
 
 		// initialize all systems
+		game.services.overlay_service = new OverlayService();
 		game.services.cheat_service = new CheatService();
 		game.services.player_service = new PlayerService();
 		game.services.enemy_service = new EnemyService();
