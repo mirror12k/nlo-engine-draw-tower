@@ -847,7 +847,7 @@ GoalCircle.prototype.update = function (game) {
 };
 
 function NonBuildableCircle(px, py, radius) {
-	ScreenEntity.call(this, game, px, py, radius, radius, game.images.circuit);
+	ScreenEntity.call(this, game, px, py, radius*2+5, radius*2+5, game.images.circuit);
 
 	this.color = '#ccf';
 	this.edge_color = '#444';
@@ -855,20 +855,42 @@ function NonBuildableCircle(px, py, radius) {
 	this.radius = radius;
 
 	this.z_index = 5;
+
+	this.prerender_self();
 }
 NonBuildableCircle.prototype = Object.create(ScreenEntity.prototype);
-NonBuildableCircle.prototype.draw_self = function (ctx) {
+NonBuildableCircle.prototype.prerender_self = function () {
+	var scratch_image = document.createElement('canvas');
+	scratch_image.width = this.width;
+	scratch_image.height = this.height;
 
-	ctx.beginPath();
-	ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
+	var ctx = scratch_image.getContext('2d');
+	ctx.imageSmoothingEnabled = false;
 	var pattern = ctx.createPattern(this.image, 'repeat');
 	ctx.fillStyle = pattern;
+	// ctx.fillStyle = this.color;
+	ctx.translate(this.width / 2, this.height / 2);
+	ctx.beginPath();
+	ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
 	// ctx.fillStyle = this.color;
 	ctx.fill();
 	ctx.lineWidth = 3;
 	ctx.strokeStyle = this.edge_color;
 	ctx.stroke();
+
+	this.image = scratch_image;
 };
+// NonBuildableCircle.prototype.draw_self = function (ctx) {
+
+// 	ctx.beginPath();
+// 	ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
+// 	ctx.fillStyle = this.pattern;
+// 	// ctx.fillStyle = this.color;
+// 	ctx.fill();
+// 	ctx.lineWidth = 3;
+// 	ctx.strokeStyle = this.edge_color;
+// 	ctx.stroke();
+// };
 
 function NonBuildableRectangle(px, py, width, height) {
 	ScreenEntity.call(this, game, px, py, width + 10, height + 10, game.images.circuit);
@@ -877,18 +899,36 @@ function NonBuildableRectangle(px, py, width, height) {
 	this.edge_color = '#444';
 
 	this.z_index = 5;
+
+	this.prerender_self();
 }
 NonBuildableRectangle.prototype = Object.create(ScreenEntity.prototype);
-NonBuildableRectangle.prototype.draw_self = function (ctx) {
+NonBuildableRectangle.prototype.prerender_self = function (ctx) {
+	var scratch_image = document.createElement('canvas');
+	scratch_image.width = this.width;
+	scratch_image.height = this.height;
 
+	var ctx = scratch_image.getContext('2d');
+	ctx.imageSmoothingEnabled = false;
 	var pattern = ctx.createPattern(this.image, 'repeat');
 	ctx.fillStyle = pattern;
 	// ctx.fillStyle = this.color;
-	ctx.fillRect(-(this.width-10) / 2, -(this.height-10) / 2, (this.width-10), (this.height-10));
+	ctx.fillRect(10/2, 10/2, (this.width-10), (this.height-10));
 	ctx.lineWidth = 3;
 	ctx.strokeStyle = this.edge_color;
-	ctx.strokeRect(-(this.width-10) / 2, -(this.height-10) / 2, (this.width-10), (this.height-10));
+	ctx.strokeRect(10/2, 10/2, (this.width-10), (this.height-10));
+	this.image = scratch_image;
 };
+// NonBuildableRectangle.prototype.draw_self = function (ctx) {
+
+// 	// var pattern = ctx.createPattern(this.image, 'repeat');
+// 	// ctx.fillStyle = this.pattern;
+// 	ctx.fillStyle = this.color;
+// 	ctx.fillRect(-(this.width-10) / 2, -(this.height-10) / 2, (this.width-10), (this.height-10));
+// 	ctx.lineWidth = 3;
+// 	ctx.strokeStyle = this.edge_color;
+// 	ctx.strokeRect(-(this.width-10) / 2, -(this.height-10) / 2, (this.width-10), (this.height-10));
+// };
 // NonBuildableRectangle.prototype.update = function (game) {
 // 	ScreenEntity.prototype.update.call(this, game);
 
@@ -959,7 +999,7 @@ function main () {
 			turret: 'assets/img/turret.png',
 			fourway_turret: 'assets/img/fourway_turret.png',
 			projectile: 'assets/img/projectile.png',
-			circuit: 'assets/img/circuit.png',
+			circuit: 'assets/img/circuit2.png',
 
 			brackets: 'assets/img/brackets.png',
 			heart: 'assets/img/heart.png',

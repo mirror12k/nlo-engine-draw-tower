@@ -220,7 +220,7 @@ GameSystem.prototype.draw = function (ctx) {
 	ctx.fillStyle = 'rgba(0,0,0,0.05)';
 	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-	ctx.drawImage(this.canvas, 1, 1, this.canvas.width, this.canvas.height);
+	ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height);
 	// ctx.globalAlpha = 1;
 
 	var entities_to_draw = this.entities.filter(e => e.active);
