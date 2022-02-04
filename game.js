@@ -161,74 +161,74 @@ UserInputService.prototype.update = function(game) {
 
 
 
-		// } else if (
-		// 		(game.services.turret_service.is_firing === true)) {
-		// 	// player is putting down barricades
+		} else if (
+				(game.services.turret_service.is_firing === true)) {
+			// player is putting down barricades
 
-		// 	// create a scribble
-		// 	game.add_entity(this.scribble = new CrossScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
+			// create a scribble
+			game.add_entity(this.scribble = new CrossScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
 
-		// 	var ink_amount = 400;
-
-
-		// 	// drag it until the player releases the mouse button
-		// 	this.until(() => !game.mouse1_state && ink_amount >= 0, () => {
-		// 		var p = game.mouse_game_position;
-		// 		var d = dist(p, this.scribble.points[this.scribble.points.length-1]);
-		// 		var max = 15 + Math.random() * 5;
-		// 		if (d > max) {
-		// 			var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 50))));
-		// 			p = addp(
-		// 					unit_mul(n, max),
-		// 					this.scribble.points[this.scribble.points.length-1]);
-		// 			d = dist(p, this.scribble.points[this.scribble.points.length-1]);
-
-		// 		}
-
-		// 		if (d > 15
-		// 				&& ink_amount >= d
-		// 				&& !game.query_entities(NonBuildableCircle).find(circle => dist(circle, p) < circle.radius + 10)
-		// 				&& !game.find_at(NonBuildableRectangle, p)
-		// 				&& p.px >= 0 && p.px <= game.canvas.width
-		// 				&& p.py >= 0 && p.py <= game.canvas.height) {
-		// 			ink_amount -= d;
-		// 			this.scribble.add_point(p);
-		// 		}
-
-		// 	}, () => {
-
-		// 		if (game.last_barricade) {
-		// 			var last = game.last_barricade;
-		// 			last.do_fade = true;
-		// 			last.shadow.do_fade = true;
-		// 			this.after(2, () => {
-		// 				game.remove_entity(last);
-		// 				game.remove_entity(last.shadow);
-		// 			});
-		// 		}
-
-		// 		game.last_barricade = this.scribble;
-
-		// 		game.add_entity(this.second_scribble = new CrossScribble());
-		// 		this.second_scribble.z_index = 1;
-		// 		this.second_scribble.px = 2;
-		// 		this.second_scribble.py = 2;
-		// 		this.second_scribble.is_greyscale = true;
-		// 		this.second_scribble.line_width = 6;
-		// 		this.second_scribble.play_pointset(this.scribble.points);
-		// 		this.scribble.shadow = this.second_scribble;
+			var ink_amount = 400;
 
 
-		// 		var s = this.scribble;
-		// 		this.after(30, () => {
-		// 			s.do_fade = true;
-		// 			s.shadow.do_fade = true;
-		// 			this.after(2, () => {
-		// 				game.remove_entity(s);
-		// 				game.remove_entity(s.shadow);
-		// 			});
-		// 		});
-		// 	});
+			// drag it until the player releases the mouse button
+			this.until(() => !game.mouse1_state && ink_amount >= 0, () => {
+				var p = game.mouse_game_position;
+				var d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+				var max = 15 + Math.random() * 5;
+				if (d > max) {
+					var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 50))));
+					p = addp(
+							unit_mul(n, max),
+							this.scribble.points[this.scribble.points.length-1]);
+					d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+
+				}
+
+				if (d > 15
+						&& ink_amount >= d
+						&& !game.query_entities(NonBuildableCircle).find(circle => dist(circle, p) < circle.radius + 10)
+						&& !game.find_at(NonBuildableRectangle, p)
+						&& p.px >= 0 && p.px <= game.canvas.width
+						&& p.py >= 0 && p.py <= game.canvas.height) {
+					ink_amount -= d;
+					this.scribble.add_point(p);
+				}
+
+			}, () => {
+
+				if (game.last_barricade) {
+					var last = game.last_barricade;
+					last.do_fade = true;
+					last.shadow.do_fade = true;
+					this.after(2, () => {
+						game.remove_entity(last);
+						game.remove_entity(last.shadow);
+					});
+				}
+
+				game.last_barricade = this.scribble;
+
+				game.add_entity(this.second_scribble = new CrossScribble());
+				this.second_scribble.z_index = 1;
+				this.second_scribble.px = 2;
+				this.second_scribble.py = 2;
+				this.second_scribble.is_greyscale = true;
+				this.second_scribble.line_width = 6;
+				this.second_scribble.play_pointset(this.scribble.points);
+				this.scribble.shadow = this.second_scribble;
+
+
+				var s = this.scribble;
+				this.after(30, () => {
+					s.do_fade = true;
+					s.shadow.do_fade = true;
+					this.after(2, () => {
+						game.remove_entity(s);
+						game.remove_entity(s.shadow);
+					});
+				});
+			});
 
 		} else if (
 				(game.services.turret_service.is_firing === true)) {
@@ -264,7 +264,7 @@ UserInputService.prototype.update = function(game) {
 					ink_amount -= d;
 					this.scribble.add_point(p);
 
-					var ents = game.services.enemy_service.sub_entities.filter(e => dist_sqr(e, p) < 50 * 50);
+					var ents = game.services.enemy_service.sub_entities.filter(e => dist_sqr(e, p) < 100 * 100);
 					game.services.enemy_service.remove_entities(ents);
 				}
 
@@ -278,6 +278,62 @@ UserInputService.prototype.update = function(game) {
 				this.after(2, () => {
 					game.services.overlay_service.remove_entity(s);
 				});
+			});
+
+
+
+
+		} else if (
+				(game.services.turret_service.is_firing === true)) {
+			// player is putting down barricades
+
+			// create a scribble
+			game.add_entity(
+					this.scribble = new ReflectorScribble([game.mouse_game_position, game.mouse_game_position, game.mouse_game_position]));
+
+			var ink_amount = 300;
+
+			game.timescale = 0.1;
+
+
+			// drag it until the player releases the mouse button
+			this.until(() => !game.mouse1_state && ink_amount >= 0, () => {
+				var p = game.mouse_game_position;
+				var d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+				var max = 15 + Math.random() * 5;
+				if (d > max) {
+					var n = unit_vector(vector_delta(this.scribble.points[this.scribble.points.length-1], addp(p, unit_mul(rand_vector(), Math.random() * 5))));
+					p = addp(
+							unit_mul(n, max),
+							this.scribble.points[this.scribble.points.length-1]);
+					d = dist(p, this.scribble.points[this.scribble.points.length-1]);
+
+				}
+
+				if (d > 15
+						&& ink_amount >= d
+						&& p.px >= 0 && p.px <= game.canvas.width
+						&& p.py >= 0 && p.py <= game.canvas.height) {
+					ink_amount -= d;
+					this.scribble.add_point(p);
+				}
+
+			}, () => {
+
+				game.timescale = 1;
+
+				this.scribble.calculate_direction();
+
+				if (game.last_reflector) {
+					var s = game.last_reflector;
+					s.do_fade = true;
+					this.after(2, () => {
+						game.remove_entity(s);
+					});
+				}
+
+				game.last_reflector = this.scribble;
+
 			});
 
 		}
@@ -360,6 +416,10 @@ EnemyService.prototype.update = function(game) {
 
 	this.remove_entities(collisons.filter(col => col.ent.health <= 0).map(col => col.ent));
 	this.remove_entities(barricade_collisons.filter(col => col.ent.health <= 0).map(col => col.ent));
+
+	// for (var ent of collisons.filter(col => col.ent.health <= 0).map(col => col.ent)) {
+	// 	game.services.blood_service.break_image(ent.px, ent.py, ent.image);
+	// }
 
 };
 EnemyService.prototype.draw = function(ctx) {
@@ -963,6 +1023,68 @@ ErasingScribble.prototype.render_scribble = function(prev, from, to, next) {
 		ctx.stroke();
 	// }
 	ctx.restore();
+};
+
+
+
+function ReflectorScribble(points=[]) {
+	Scribble.call(this, points);
+
+	this.z_index = 5;
+
+	this.slow_draw_cycle = 0;
+	this.every(0.05, () => {
+		var i = Math.floor(this.points.length * this.slow_draw_cycle / (Math.PI * 2));
+
+		if (i >= 3 && !this.do_fade) {
+			this.render_scribble(this.points[i-3], this.points[i-2], this.points[i-1], this.points[i], this.draw_cycle);
+		}
+	});
+}
+ReflectorScribble.prototype = Object.create(Scribble.prototype);
+ReflectorScribble.prototype.render_scribble = function(prev, from, to, next, offset=0) {
+	// var d = dist(from, to);
+	// var d1 = unit_mul(unit_vector(vector_delta(prev, from)), 10);
+	// var d2 = unit_mul(unit_vector(vector_delta(next, to)), 10);
+	// var davg = unit_mul(avgp(d1,d2), 2);
+	// var dr1 = lerpp(davg, d1, 0);
+	// var dr2 = lerpp(davg, d2, 0);
+
+	var ctx = this.buffer_canvas.getContext('2d');
+	ctx.save();
+	ctx.globalAlpha = 1;
+	ctx.lineWidth = 6;
+	var draw_cycle = to.draw_cycle || 0;
+
+	// if (this.is_greyscale) {
+	// } else {
+		ctx.strokeStyle = 'rgb('
+				+ Math.floor((Math.cos((draw_cycle * 200) + offset) / 2 + 0.5)*128) *2 + ','
+				+ Math.floor((Math.cos((draw_cycle * 200) + offset) / 2 + 0.5)*128+64) *2 + ','
+				+ Math.floor((Math.cos((draw_cycle * 200) + offset) / 2 + 0.5)*128+127) *2 + ')';
+	// }
+	// ctx.strokeStyle = '#222';
+	// ctx.strokeStyle = this.color;
+		ctx.beginPath();
+		ctx.moveTo(from.px, from.py);
+		ctx.lineTo(to.px, to.py);
+		ctx.stroke();
+	// }
+	ctx.restore();
+};
+ReflectorScribble.prototype.update = function(game) {
+	Scribble.prototype.update.call(this, game);
+	this.slow_draw_cycle += game.deltatime * 4;
+	this.slow_draw_cycle %= Math.PI * 2;
+};
+ReflectorScribble.prototype.calculate_direction = function() {
+	var angle = angle_of(this.points[0], this.points[this.points.length-1]);
+	angle = 45 * Math.floor((angle + 22.5) / 45);
+	angle = (angle + 180) % 180;
+
+	this.reflector_angle = angle;
+
+	// console.log("reflector angle: ", angle);
 };
 
 function CrawlerEnemy(px, py, path) {

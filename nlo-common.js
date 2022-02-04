@@ -530,4 +530,5 @@ function unit_mul(p, n) { return { px: p.px*n, py: p.py*n }; }
 function avgp(p1, p2) { return { px: (p1.px+p2.px)/2, py: (p1.py+p2.py)/2 }; }
 function addp(p1, p2) { return { px: p1.px+p2.px, py: p1.py+p2.py }; }
 function rand_vector() { var a = Math.random() * Math.PI * 2; return { px: Math.cos(a), py: Math.sin(a) };; }
+function angle_of(p1, p2) { return Math.atan2(p2.py - p1.py, p2.px - p1.px) / Math.PI * 180; }
 
